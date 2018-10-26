@@ -48,7 +48,6 @@ class MainActivity : AppCompatActivity() {
 
         requestReadPhoneStatePermissons()
 
-
     }
 
 
@@ -75,9 +74,7 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             // Permission has already been granted
-            ActivityCompat.requestPermissions(this,
-                    arrayOf(Manifest.permission.READ_PHONE_STATE),
-                    MY_PERMISSIONS_REQUEST_READ_PHONE_STATE)
+            setIMEIView()
         }
     }
 
@@ -88,9 +85,7 @@ class MainActivity : AppCompatActivity() {
                 // If request is cancelled, the result arrays are empty.
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     // permission was granted, yay! Do the work
-                    imeiTextView.text = "${getString(R.string.imei_label)} ${getIMEI()}"
-                    imeiButton.visibility = View.GONE
-
+                    setIMEIView()
                 } else {
                     if(ActivityCompat.shouldShowRequestPermissionRationale(this,
                                     Manifest.permission.READ_PHONE_STATE)){
@@ -119,6 +114,11 @@ class MainActivity : AppCompatActivity() {
                 Uri.parse("package:$packageName"))
         startActivityForResult(appSettingsIntent, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE)
         recreate()
+    }
+
+    private fun setIMEIView(){
+        imeiTextView.text = "${getString(R.string.imei_label)} ${getIMEI()}"
+        imeiButton.visibility = View.GONE
     }
 
     private fun getIMEI() : String {
