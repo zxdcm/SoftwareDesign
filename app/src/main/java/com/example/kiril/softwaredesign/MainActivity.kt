@@ -3,6 +3,7 @@ package com.example.kiril.softwaredesign
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.opengl.Visibility
@@ -41,7 +42,12 @@ class MainActivity : AppCompatActivity() {
         imeiButton = findViewById<Button>(R.id.IMEIButton)
         imeiButton.setOnClickListener{requestReadPhoneStatePermissons()}
 
+        if (getResources().getBoolean(R.bool.portrait_constraint)) {
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+        }
+
         requestReadPhoneStatePermissons()
+
 
     }
 
