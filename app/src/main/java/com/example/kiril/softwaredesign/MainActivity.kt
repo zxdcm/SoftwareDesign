@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity() {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                             Manifest.permission.READ_PHONE_STATE)) {
 
-                Snackbar.make(rootView, getString(R.string.ReadPhoneStatePermissonsMessage), Snackbar.LENGTH_INDEFINITE)
-                        .setAction("SUBMIT", View.OnClickListener{
+                Snackbar.make(rootView, getString(R.string.readPhoneStatePermissonsMessage), Snackbar.LENGTH_INDEFINITE)
+                        .setAction(getString(R.string.submitButton), View.OnClickListener{
                             ActivityCompat.requestPermissions(this,
                                     arrayOf(Manifest.permission.READ_PHONE_STATE),
                                     MY_PERMISSIONS_REQUEST_READ_PHONE_STATE)
@@ -88,12 +88,12 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     if(ActivityCompat.shouldShowRequestPermissionRationale(this,
                                     Manifest.permission.READ_PHONE_STATE)){
-                        Toast.makeText(this, getString(R.string.ReadPhoneStatePermissonsRationalate),
+                        Toast.makeText(this, getString(R.string.readPhoneStatePermissonsRationalate),
                                 Toast.LENGTH_LONG).show()
                     }else{
-                        Snackbar.make(rootView, getString(R.string.ReadPhoneStatePermissonsOnDontShowAgain),
+                        Snackbar.make(rootView, getString(R.string.readPhoneStatePermissonsOnDontShowAgain),
                                 Snackbar.LENGTH_LONG)
-                                .setAction("SETTINGS", {OpenSettings()})
+                                .setAction(getString(R.string.settingsButton), {OpenSettings()})
                                 .show()
                     }                }
                 return
