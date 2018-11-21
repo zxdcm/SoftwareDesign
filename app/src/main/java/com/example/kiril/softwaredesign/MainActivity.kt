@@ -19,6 +19,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -51,14 +52,14 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        versionTextView = findViewById<TextView>(R.id.VersionTextView).apply {
+        versionTextView = VersionTextView.apply {
             text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
         }
 
-        imeiTextView = findViewById(R.id.IMEITextView)
-        rootView = findViewById(R.id.root)
+        imeiTextView = IMEITextView
+        rootView = root
 
-        imeiButton = findViewById<Button>(R.id.IMEIButton)
+        imeiButton = IMEIButton
         imeiButton.setOnClickListener { requestReadPhoneStatePermissons() }
 
         requestReadPhoneStatePermissons()
