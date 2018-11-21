@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">SoftwareDesign</string>
+    <string name="app_version">App version: %s</string>
+    <string name="imei_label">IMEI: %s</string>
+    <string name="imei_button">Click to show IMEI</string>
+    <string name="readPhoneStatePermissonsMessage">
+        Permissions required to use this functions
+    </string>
+    <string name="readPhoneStatePermissonsRationalate">
+        You have to give permissons to see IMEI.
+    </string>
+    <string name="readPhoneStatePermissonsOnDontShowAgain">
+        You have to give permission manually via settings.
+    </string>
+    <string name="settingsButton">Settings</string>
+    <string name="submitButton">Submit</string>
+
+</resources>
