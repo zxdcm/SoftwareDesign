@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">SoftwareDesign</string>
-    <string name="app_version">App version: </string>
-    <string name="imei_label">IMEI: </string>
+    <string name="app_version">App version: %s</string>
+    <string name="imei_label">IMEI: %s</string>
     <string name="imei_button">Click to show IMEI</string>
     <string name="readPhoneStatePermissonsMessage">
         Permissions required to use this functions
