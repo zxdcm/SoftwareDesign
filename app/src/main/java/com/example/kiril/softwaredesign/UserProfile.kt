@@ -1,0 +1,12 @@
+package com.example.kiril.softwaredesign
+
+import com.google.firebase.database.IgnoreExtraProperties
+
+
+@IgnoreExtraProperties
+data class UserProfile(
+        var firstName: String? = "",
+        var lastName: String? = "",
+        var phone: String? = "",
+        var image: String? = ""
+)

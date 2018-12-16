@@ -21,6 +21,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import kotlinx.android.synthetic.main.activity_about.*
 
+
 class AboutActivity : AppCompatActivity() {
 
     private lateinit var imeiTextView: TextView
@@ -35,9 +36,8 @@ class AboutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_about)
 
-        if (getResources().getBoolean(R.bool.portrait_constraint)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-        }
+        if (getResources().getBoolean(R.bool.portrait_constraint))
+            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         if (savedInstanceState != null){
             val savedImei = savedInstanceState.getString("IMEI")
@@ -82,7 +82,7 @@ class AboutActivity : AppCompatActivity() {
                             Manifest.permission.READ_PHONE_STATE)) {
 
                 Snackbar.make(rootView, getString(R.string.readPhoneStatePermissonsMessage), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.submitButton), View.OnClickListener{
+                        .setAction(getString(R.string.submitButton), {
                             ActivityCompat.requestPermissions(this,
                                     arrayOf(Manifest.permission.READ_PHONE_STATE),
                                     MY_PERMISSIONS_REQUEST_READ_PHONE_STATE)
