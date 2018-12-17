@@ -21,7 +21,7 @@ class RegistrationFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         loginButton.setOnClickListener {
-            findNavController().navigate(R.id.action_registrationFragment_to_loginFragment)
+            findNavController().popBackStack()
         }
         registerButton.setOnClickListener {
             toggleButtons()
@@ -34,7 +34,7 @@ class RegistrationFragment : Fragment() {
                         .addOnCompleteListener { auth ->
                             toggleButtons()
                             if (auth.isSuccessful)
-                                findNavController().navigate(R.id.action_registrationFragment_to_profileEditFragment)
+                                (activity as AuthorizationActivity).startMainActivity()
                             else
                                 Toast.makeText(context, auth.exception.toString(), Toast.LENGTH_SHORT).show()
                         }

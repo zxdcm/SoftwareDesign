@@ -55,13 +55,15 @@ class ProfileEditFragment : Fragment() {
                         profilePhone?.editText?.setText(userProfile?.phone)
                         if (!userProfile?.image.isNullOrBlank()) {
                             var tempFile = File.createTempFile("img", "png");
-                            FirebaseStorage.getInstance()
-                                    .getReference(userProfile!!.image!!)
-                                    .getFile(tempFile)
-                                    .addOnSuccessListener {
-                                        var bitmap = BitmapFactory.decodeFile(tempFile.absolutePath)
-                                        profileImage?.setImageBitmap(bitmap)
-                                    }
+                            userProfile?.image?.let { imageUri ->
+                                FirebaseStorage.getInstance()
+                                        .getReference(imageUri)
+                                        .getFile(tempFile)
+                                        .addOnSuccessListener {
+                                            var bitmap = BitmapFactory.decodeFile(tempFile.absolutePath)
+                                            profileImage?.setImageBitmap(bitmap)
+                                        }
+                            }
                         }
                     }
                     showInputs()
@@ -77,8 +79,8 @@ class ProfileEditFragment : Fragment() {
         profileEditImageButton.setOnClickListener {
             val pictureDialog = AlertDialog.Builder(this.context!!)
             val pictureDialogItems = arrayOf(getString(R.string.select_photo_from_gallery), getString(R.string.capture_photo))
-            pictureDialog.setItems(pictureDialogItems
-            ) { _, which ->
+            pictureDialog.setItems(pictureDialogItems)
+            { _, which ->
                 when (which) {
                     0 -> getPhotoFromGallery()
                     1 -> getPhotoFromCamera()
@@ -88,7 +90,7 @@ class ProfileEditFragment : Fragment() {
         }
 
         cancelButton.setOnClickListener {
-            findNavController().navigate(R.id.action_profileEditFragment_to_profileFragment)
+            findNavController().popBackStack()
         }
         saveButton.setOnClickListener {
             hideInputs()
@@ -132,7 +134,7 @@ class ProfileEditFragment : Fragment() {
         if (user != null) {
             databaseReference.child(user.uid).setValue(userProfile).addOnCompleteListener {
                 if (it.isSuccessful)
-                    findNavController().navigate(R.id.action_profileEditFragment_to_profileFragment)
+                    findNavController().popBackStack()
                 else
                     showInputs()
             }

@@ -62,11 +62,13 @@ class ProfileFragment : Fragment() {
         }
 
         profileEditButton.setOnClickListener {
+            // TODO: FIX
+            //findNavController().popBackStack()
             findNavController().navigate(R.id.action_profileFragment_to_profileEditFragment)
         }
         logoutButton.setOnClickListener {
             FirebaseAuth.getInstance().signOut()
-            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+            (activity as MainActivity).startAuthorizationActivity()
         }
     }
 

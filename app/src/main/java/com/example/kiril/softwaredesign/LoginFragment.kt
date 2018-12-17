@@ -25,16 +25,16 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.action_loginFragment_to_registrationFragment)
         }
         loginButton.setOnClickListener {
-            disableButtons()
+            toggleButtons()
             val email = email.editText?.text.toString().trim()
             val password = password.editText?.text.toString().trim()
             if (email.isNotBlank() && password.isNotBlank()){
                 FirebaseAuth.getInstance()
                         .signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener { auth ->
-                            enableButtons()
+                            toggleButtons()
                             if (auth.isSuccessful){
-                                findNavController().navigate(R.id.action_loginFragment_to_profileFragment)
+                                (activity as AuthorizationActivity).startMainActivity()
                             }
                             else
                                 Toast.makeText(
@@ -43,7 +43,7 @@ class LoginFragment : Fragment() {
                                     Toast.LENGTH_SHORT).show()
                         }
             } else {
-                enableButtons()
+                toggleButtons()
                 Toast.makeText(
                         context,
                         getString(R.string.email_password_blank),
@@ -53,17 +53,6 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun enableButtons()
-    {
-        registerButton.isEnabled = true
-        loginButton.isEnabled = true
-    }
-
-    private fun disableButtons()
-    {
-        registerButton.isEnabled = false
-        loginButton.isEnabled = false
-    }
 
     private fun toggleButtons() {
         registerButton.isEnabled = !registerButton.isEnabled
