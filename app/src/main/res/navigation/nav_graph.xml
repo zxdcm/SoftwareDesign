@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.kiril.softwaredesign.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.kiril.softwaredesign.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_profileEditFragment"
+            app:destination="@id/profileEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileEditFragment"
+        android:name="com.example.kiril.softwaredesign.ProfileEditFragment"
+        android:label="fragment_profile_edit"
+        tools:layout="@layout/fragment_profile_edit" ></fragment>
+    <fragment
+        android:id="@+id/rssFragment"
+        android:name="com.example.kiril.softwaredesign.RssFragment"
+        android:label="fragment_rss"
+        tools:layout="@layout/fragment_rss" >
+        <action
+            android:id="@+id/action_rssFragment_to_rssWebviewFragment"
+            app:destination="@id/rssWebviewFragment" />
+        <action
+            android:id="@+id/action_rssFragment_to_changeRssSourceFragment"
+            app:destination="@id/changeRssSourceFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/rssWebviewFragment"
+        android:name="com.example.kiril.softwaredesign.RssWebViewFragment"
+        android:label="fragment_rss_webview"
+        tools:layout="@layout/fragment_rss_web_view" >
+        <argument
+            android:name="link"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/changeRssSourceFragment"
+        android:name="com.example.kiril.softwaredesign.ChangeRssFragment"
+        android:label="fragment_change_rss_source"
+        tools:layout="@layout/fragment_change_rss" />
+</navigation>

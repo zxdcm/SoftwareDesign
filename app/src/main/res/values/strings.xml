@@ -15,4 +15,53 @@
     <string name="settingsButton">Settings</string>
     <string name="submitButton">Submit</string>
 
+    <string name="profile">Profile</string>
+    <string name="welcome_text">Hello, stranger</string>
+    <string name="title_activity_about">About</string>
+    <string name="action_about">@string/title_activity_about</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="title_activity_main">Software Design</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">pass</string>
+
+    <!-- Login fragment -->
+    <string name="login">Login</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="create_new">Create new account</string>
+
+    <string name="email_password_blank">Emal and password must contain values</string>
+    <string name="create_new_account">new account</string>
+    <string name="password_confirmation">blank</string>
+    <string name="register">blank</string>
+
+    <string name="sign_in_to_your_account">blank</string>
+    <string name="registration_error">Invalid email and(or) passwords are not equals </string>
+    <string name="change_photo">Change photo</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="phone">Phone number</string>
+    <string name="profile_image">Profile image</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="edit_profile">Edit profile</string>
+    <string name="logout">Logout</string>
+    <string name="capture_photo">Capture photo from camera</string>
+    <string name="select_photo_from_gallery">Select image from gallery</string>
+    <string name="unsaved_data_message">You have unsaved data! Leave?</string>
+    <string name="no_internet_connection_and_cached_articles">No internet connection and cached articles</string>
+    <string name="change_rss_source">Change RSS source</string>
+    <string name="rss_url">RSS url</string>
+    <string name="card_image">Card image</string>
+    <string name="home">Home</string>
+    <string name="rss">RSS</string>
+    <string name="ok">Ok</string>
+    <!-- -->
+
+
 </resources>

@@ -1,155 +1,201 @@
 package com.example.kiril.softwaredesign
 
-import android.Manifest
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.opengl.Visibility
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.provider.Settings
-import android.support.design.widget.Snackbar
-import android.support.v4.app.ActivityCompat
-import android.support.v4.content.ContextCompat
-import android.telephony.TelephonyManager
-import android.view.View
-import android.widget.Button
+import android.util.Log
+import com.google.android.material.navigation.NavigationView
+import androidx.core.view.GravityCompat
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : AppCompatActivity() {
 
-    private lateinit var imeiTextView: TextView
-    private lateinit var imeiButton: Button
-    private lateinit var rootView: View
-    private lateinit var versionTextView: TextView
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+        MainFragment.OnFragmentInteractionListener, ProfileFragment.OnFragmentInteractionListener,
+        ProfileEditFragment.OnFragmentInteractionListener, LoginFragment.OnFragmentInteractionListener,
+        RegistrationFragment.OnFragmentInteractionListener {
+    override fun onFragmentInteraction(uri: Uri) {}
 
-    private val MY_PERMISSIONS_REQUEST_READ_PHONE_STATE : Int = 1
+    private lateinit var navController: NavController
+
+    private val MainFragmentPageNumber = "1"
+    private val ProfileFragmentPageNumber = "2"
+    private val RssFragmentPageNumber = "3"
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        if (getResources().getBoolean(R.bool.portrait_constraint)) {
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
-        }
-
-        if (savedInstanceState != null){
-            val savedImei = savedInstanceState.getString("IMEI")
-
-            if (savedImei.isNullOrEmpty())        // check does the permissions
-                requestReadPhoneStatePermissons() // were granted after app closing or folding
-            else
-                imeiTextView.text = savedInstanceState.getString("IMEI")
-
-            versionTextView.text = savedInstanceState.getString("VERSION")
-
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser == null) {
+            startAuthActivity()
             return
         }
 
-        versionTextView = VersionTextView.apply {
-            text = getString(R.string.app_version, BuildConfig.VERSION_NAME)
-        }
+        setContentView(R.layout.activity_main)
 
-        imeiTextView = IMEITextView
-        rootView = root
+        setSupportActionBar(toolbar)
+        navController = findNavController(R.id.nav_host_fragment)
 
-        imeiButton = IMEIButton
-        imeiButton.setOnClickListener { requestReadPhoneStatePermissons() }
+        val toggle = ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
 
-        requestReadPhoneStatePermissons()
-    }
+        nav_view.setNavigationItemSelectedListener(this)
+        nav_view.setCheckedItem(R.id.nav_home)
+        setProfileEmail(currentUser.email.toString())
+        setNavHeaderOnClickListener()
 
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        outState?.putString("IMEI", imeiTextView.text.toString())
-        outState?.putString("VERSION", imeiTextView.text.toString())
-    }
-
-
-
-    fun requestReadPhoneStatePermissons(){
-
-        if (ContextCompat.checkSelfPermission(this,  Manifest.permission.READ_PHONE_STATE)
-                != PackageManager.PERMISSION_GRANTED) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                            Manifest.permission.READ_PHONE_STATE)) {
-
-                Snackbar.make(rootView, getString(R.string.readPhoneStatePermissonsMessage), Snackbar.LENGTH_INDEFINITE)
-                        .setAction(getString(R.string.submitButton), View.OnClickListener{
-                            ActivityCompat.requestPermissions(this,
-                                    arrayOf(Manifest.permission.READ_PHONE_STATE),
-                                    MY_PERMISSIONS_REQUEST_READ_PHONE_STATE)
-                        })
-                        .show()
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        arrayOf(Manifest.permission.READ_PHONE_STATE),
-                        MY_PERMISSIONS_REQUEST_READ_PHONE_STATE)
+        val userProfileListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val userProfile = dataSnapshot.getValue(UserProfile::class.java)
+                if (userProfile != null) {
+                    val fullName = """${userProfile.firstName} ${userProfile.lastName}"""
+                    getNameTextViewFromNavView().text = fullName
+                    if (!userProfile.image.isBlank()) {
+                        val imageReference = FirebaseStorage.getInstance()
+                                .getReference(userProfile.image)
+                        GlideApp.with(applicationContext)
+                                .load(imageReference)
+                                .into(getProfileImageViewFromNavView())
+                    }
+                }
             }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e(ContentValues.TAG, "loadPost:onCancelled", databaseError.toException())
+            }
+        }
+        FirebaseDatabase.getInstance().reference.child(currentUser.uid).addValueEventListener(userProfileListener)
+
+        openFragmentFromIntentPath()
+    }
+
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-          setIMEIView()
+            super.onBackPressed()
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_all, menu)
+        return true
+    }
 
-    override fun onRequestPermissionsResult(requestCode: Int,
-                                            permissions: Array<String>, grantResults: IntArray) {
-        when (requestCode) {
-            MY_PERMISSIONS_REQUEST_READ_PHONE_STATE -> {
-                // If request is cancelled, the result arrays are empty.
-                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    // permission was granted, yay! Do the work
-                    setIMEIView()
-                } else {
-                    if(ActivityCompat.shouldShowRequestPermissionRationale(this,
-                                    Manifest.permission.READ_PHONE_STATE)){
-                        Toast.makeText(this, getString(R.string.readPhoneStatePermissonsRationalate),
-                                Toast.LENGTH_LONG).show()
-                    }else{
-                        Snackbar.make(rootView, getString(R.string.readPhoneStatePermissonsOnDontShowAgain),
-                                Snackbar.LENGTH_LONG)
-                                .setAction(getString(R.string.settingsButton), {OpenSettings()})
-                                .show()
-                    }                }
-                return
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment)
+                ?.childFragmentManager?.fragments?.get(0)
+        if (currentFragment != null
+                && navController.currentDestination?.id == R.id.profileEditFragment
+                && (currentFragment as ProfileEditFragment).dataChanged) {
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage(getString(R.string.unsaved_data_message))
+                    .setPositiveButton(resources.getString(R.string.ok)) { _, _ ->
+                        startActivity(Intent(this, AboutActivity::class.java))
+                    }.setNegativeButton(resources.getString(R.string.cancel)) { _, _ -> }
+            builder.show()
+            return false
+        }
+        return when (item.itemId) {
+            R.id.action_about -> {
+                startActivity(Intent(this, AboutActivity::class.java))
+                true
             }
+            R.id.action_change_rss -> {
+                navController.navigate(R.id.action_rssFragment_to_changeRssSourceFragment)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
-            // Add other 'when' lines to check for other
-            // permissions app might request.
-            else -> {
-                // Ignore all other requests.
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_home -> {
+                navController.navigate(R.id.mainFragment)
+            }
+            R.id.nav_rss -> {
+                navController.navigate(R.id.rssFragment)
+            }
+        }
+
+        item.isChecked = true
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
+    }
+
+    fun startAuthActivity() {
+        startActivity(Intent(this, AuthorizationActivity::class.java))
+        finish()
+    }
+
+    private fun setProfileEmail(email: String) {
+        val headerView = nav_view.getHeaderView(0)
+        val textView = headerView.findViewById(R.id.nav_header_profile_email) as TextView
+        textView.text = email
+    }
+
+    fun getNameTextViewFromNavView() : TextView {
+        val headerView = nav_view.getHeaderView(0)
+        return headerView.findViewById(R.id.nav_header_profile_name) as TextView
+    }
+
+    fun getProfileImageViewFromNavView() : ImageView {
+        val headerView = nav_view.getHeaderView(0)
+        return headerView.findViewById(R.id.nav_header_profile_icon) as ImageView
+    }
+
+    private fun setNavHeaderOnClickListener(){
+        val headerView = nav_view.getHeaderView(0)
+        headerView.findViewById<LinearLayout>(R.id.nav_header_layout).setOnClickListener {
+            navController.navigate(R.id.profileFragment)
+            drawer_layout.closeDrawer(GravityCompat.START)
+            val navMenuSize = nav_view.menu.size()
+            for (i in 0 until navMenuSize) {
+                nav_view.menu.getItem(i).isChecked = false
             }
         }
     }
 
-
-    private fun OpenSettings(){
-        val appSettingsIntent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                Uri.parse("package:$packageName"))
-        startActivityForResult(appSettingsIntent, MY_PERMISSIONS_REQUEST_READ_PHONE_STATE)
+    private fun openFragmentFromIntentPath() {
+        if (intent?.data != null) {
+            val number = intent?.data.toString().split("/").last()
+            when (number) {
+                MainFragmentPageNumber -> {
+                    navController.navigate(R.id.mainFragment)
+                }
+                ProfileFragmentPageNumber -> {
+                    navController.navigate(R.id.profileFragment)
+                }
+                RssFragmentPageNumber -> {
+                    navController.navigate(R.id.rssFragment)
+                }
+            }
+        }
     }
 
-    private fun setIMEIView(){
-        imeiTextView.text = getString(R.string.imei_label, getIMEI())
-        imeiButton.visibility = View.GONE
-
-    }
-
-    private fun getIMEI() : String {
-        try{
-            val tm = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            val IMEI = tm.getDeviceId()
-            return IMEI
-        }
-        catch (e: SecurityException){
-            throw e
-        }
+    fun cleanArticlesCache () {
+        getSharedPreferences("data", Context.MODE_PRIVATE)
+                .edit()
+                .putString("articles", "")
+                .apply()
     }
 }
