@@ -19,11 +19,19 @@ class LoginFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("email", email?.editText?.text.toString().trim())
+        outState.putString("password", password?.editText?.text.toString().trim())
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         registerButton.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registrationFragment)
         }
+        setDataFromBundle(savedInstanceState)
+
         loginButton.setOnClickListener {
             toggleButtons()
             val email = email.editText?.text.toString().trim()
@@ -33,22 +41,14 @@ class LoginFragment : Fragment() {
                         .signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener { auth ->
                             toggleButtons()
-                            if (auth.isSuccessful){
+                            if (auth.isSuccessful)
                                 (activity as AuthorizationActivity).startMainActivity()
-                            }
                             else
-                                Toast.makeText(
-                                    context,
-                                    auth.exception.toString(),
-                                    Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context,auth.exception.toString(), Toast.LENGTH_SHORT).show()
                         }
             } else {
                 toggleButtons()
-                Toast.makeText(
-                        context,
-                        getString(R.string.email_password_blank),
-                        Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(context, getString(R.string.email_password_blank), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -57,6 +57,19 @@ class LoginFragment : Fragment() {
     private fun toggleButtons() {
         registerButton.isEnabled = !registerButton.isEnabled
         loginButton.isEnabled = !loginButton.isEnabled
+    }
+
+    private fun setDataFromBundle(savedInstanceState: Bundle?){
+        if (savedInstanceState == null)
+            return
+
+        val extractedEmail = savedInstanceState.getString("email")
+        if (extractedEmail != null && !extractedEmail.equals("null"))
+            email?.editText?.setText(extractedEmail)
+
+        val extractedPassword = savedInstanceState.getString("password")
+        if (extractedPassword != null && extractedPassword != "null")
+            password?.editText?.setText(extractedPassword)
     }
 
     interface OnFragmentInteractionListener {

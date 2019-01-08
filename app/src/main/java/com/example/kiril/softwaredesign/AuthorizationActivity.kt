@@ -27,7 +27,8 @@ class AuthorizationActivity : AppCompatActivity() {
             R.id.action_about -> {
                 startActivity(Intent(this, AboutActivity::class.java))
                 true
-            } else -> super.onOptionsItemSelected(item)
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

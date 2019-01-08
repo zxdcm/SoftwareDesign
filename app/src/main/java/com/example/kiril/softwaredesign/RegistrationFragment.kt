@@ -15,6 +15,21 @@ class RegistrationFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_registration, container, false)
+    }z
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("email", email?.editText?.text.toString().trim())
+        outState.putString("password", password?.editText?.text.toString().trim())
+        outState.putString("password_confirmation", password_confirmation?.editText?.text.toString().trim())
+    }
+
+    private fun setDataFromBundle(savedInstanceState: Bundle?){
+        if (savedInstanceState != null) {
+            email.editText?.setText(savedInstanceState.getString("email"))
+            password.editText?.setText(savedInstanceState.getString("password"))
+            password_confirmation?.editText?.setText(savedInstanceState.getString("password_confirmation"))
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -23,6 +38,9 @@ class RegistrationFragment : Fragment() {
         loginButton.setOnClickListener {
             findNavController().popBackStack()
         }
+
+        setDataFromBundle(savedInstanceState)
+
         registerButton.setOnClickListener {
             toggleButtons()
             val email = email.editText?.text.toString().trim()

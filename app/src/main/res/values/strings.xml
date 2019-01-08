@@ -53,6 +53,14 @@
     <string name="logout">Logout</string>
     <string name="capture_photo">Capture photo from camera</string>
     <string name="select_photo_from_gallery">Select image from gallery</string>
+    <string name="unsaved_data_message">You have unsaved data! Leave?</string>
+    <string name="no_internet_connection_and_cached_articles">No internet connection and cached articles</string>
+    <string name="change_rss_source">Change RSS source</string>
+    <string name="rss_url">RSS url</string>
+    <string name="card_image">Card image</string>
+    <string name="home">Home</string>
+    <string name="rss">RSS</string>
+    <string name="ok">Ok</string>
     <!-- -->
 
 
